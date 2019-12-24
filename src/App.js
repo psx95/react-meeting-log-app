@@ -6,9 +6,17 @@ import React, { Component } from 'react';
 import Home from './Home'
 
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      user: 'PSX'
+    }
+  }
+
   render() {
     return (
-      <Home />
+      <Home user={this.state.user} />
     );
   }
 }

@@ -24,15 +24,23 @@ class Home extends Component {
                             with <a href="https://firebase.google.com">Firebase</a>.
                         </p>
 
-                        <a href="/register" className="btn btn-outline-primary mr-2">
-                            Register
-                        </a>
-                        <a href="/login" className="btn btn-outline-primary mr-2">
-                            Log In
-                        </a>
-                        <a href="/meetings" className="btn btn-primary">
-                            Meetings
-                        </a> {' ' /* This is how a space would be added to JSX code */}
+                        {/* Show login/register if the user does not exist */}
+                        {this.props.user == null && (
+                            <span>
+                                <a href="/register" className="btn btn-outline-primary mr-2">
+                                    Register
+                                </a>
+                                <a href="/login" className="btn btn-outline-primary mr-2">
+                                    Log In
+                                </a>
+                            </span>
+                        )}
+                        {this.props.user && (
+                            <a href="/meetings" className="btn btn-primary">
+                                Meetings
+                            </a>
+                        )}
+                        {' ' /* This is how a space would be added to JSX code */}
                     </div> {/* Comments */}
                 </div>
             </div>
