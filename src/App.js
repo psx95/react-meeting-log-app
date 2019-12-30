@@ -24,8 +24,13 @@ class App extends Component {
 
   componentDidMount() {
     // establish connection with firebase database and load state from there
-    const ref = firebase.database().ref('user');
-    ref.on()
+      const ref = firebase.database().ref('user');
+      ref.on('value', snapshot => {
+          let fbUser = snapshot.val();
+          this.setState({
+              user: fbUser
+          });
+      })
   }
 
   render() {
