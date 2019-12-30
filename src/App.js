@@ -3,7 +3,7 @@
 // and the index.js loads the App component and so the index.css (which was imported in index.js)
 // will be overwritten by the bootstrap.css
 import React, { Component } from 'react';
-import { Router } from '@reach/router';
+import { Router, navigate } from '@reach/router';
 import firebase from './Firebase';
 
 import Home from './Home'
@@ -18,7 +18,9 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      user: "Pranav Sharma"
+        user: null,
+        displayName: null,
+        userId: null
     }
   }
 
@@ -31,14 +33,35 @@ class App extends Component {
               user: fbUser
           });
       })
-  }
+    }
+
+    registerUser = (userName) => {
+        // onAuthStateChanged - whenever the registration of the user changes
+        // so this method is called whenever a new user is registered. This method also passes the latest Firebase User
+        // variable. This variable is up to date with the latest change in the auth state.
+        // we write this method here since we wish to update the App component's state variable depending upon the registration
+        firebase.auth().onAuthStateChanged(user => {
+            // take the display Name and push it on the firebase database
+            user.updateProfile({
+                displayName: userName
+            }).then(() => {
+                this.setState({
+                    user: user,
+                    displayName: user.displayName,
+                    userId: user.uid
+                });
+                navigate('/meetings'); // this method belongs to the reach router, we need this component imported seperately 
+                // since we earlier only imported Router component from the reach router
+            })
+        })
+    }
 
   render() {
     return (
       <div>
         <Navigation user={this.state.user} />
         {this.state.user && (
-          <Welcome user={this.state.user} />
+          <Welcome user={this.state.displayName} />
         )}
         {/** The Router component is imported from the node modules
          * This component allows component wrapped inside it to be routed using 
@@ -50,7 +73,7 @@ class App extends Component {
           <Home path='/' user={this.state.user} />
           <Login path="/login" />
           <Meetings path="/meetings" />
-          <Register path="/register" />
+          <Register path="/register" registerUser={this.registerUser}/>
         </Router>
       </div>
     );

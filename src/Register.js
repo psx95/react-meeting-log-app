@@ -4,8 +4,8 @@ import firebase from './Firebase'
 
 class Register extends Component {
     
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         // this state is only applicable to this component
         this.state = {
             displayName: '', // notice the names of these fields are same as the names given to the HTML tags
@@ -42,6 +42,9 @@ class Register extends Component {
         event.preventDefault();
         // push authentication request to firebase
         firebase.auth().createUserWithEmailAndPassword(registrationInfo.email, registrationInfo.password)
+            .then(() => {
+                this.props.registerUser(registrationInfo.displayName);
+            })
             .catch(error => {
             if (error.message != null) {
                 this.setState({ errorMessage: error.message });
