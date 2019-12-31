@@ -3,7 +3,7 @@
 // and the index.js loads the App component and so the index.css (which was imported in index.js)
 // will be overwritten by the bootstrap.css
 import React, { Component } from 'react';
-import { Router } from '@reach/router';
+import { Router, navigate } from '@reach/router';
 import firebase from './Firebase';
 
 import Home from './Home'
@@ -18,27 +18,71 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      user: "Pranav Sharma"
+        user: null,
+        displayName: null,
+        userId: null
     }
   }
 
   componentDidMount() {
     // establish connection with firebase database and load state from there
-      const ref = firebase.database().ref('user');
-      ref.on('value', snapshot => {
-          let fbUser = snapshot.val();
-          this.setState({
-              user: fbUser
-          });
-      })
-  }
+      firebase.auth().onAuthStateChanged(firebaseUser => {
+          if (firebaseUser) {
+              this.setState({
+                  user: firebaseUser,
+                  displayName: firebaseUser.displayName,
+                  userId: firebaseUser.uid
+              });
+          }
+      });
+    }
+
+    registerUser = (userName) => {
+        // onAuthStateChanged - whenever the registration of the user changes
+        // so this method is called whenever a new user is registered. This method also passes the latest Firebase User
+        // variable. This variable is up to date with the latest change in the auth state.
+        // we write this method here since we wish to update the App component's state variable depending upon the registration
+        firebase.auth().onAuthStateChanged(user => {
+            // take the display Name and push it on the firebase database
+            user.updateProfile({
+                displayName: userName
+            }).then(() => {
+                this.setState({
+                    user: user,
+                    displayName: user.displayName,
+                    userId: user.uid
+                });
+                navigate('/meetings'); // this method belongs to the reach router, we need this component imported seperately 
+                // since we earlier only imported Router component from the reach router
+            })
+        })
+    }
+
+    /**
+     * We are writing logout function directly in the app component because this function may be called from multiple 
+     * components like Navigation or from Welcome. Therefore it makes sense to place it in the App component.
+     */
+    logoutUser = (logoutEvent) => {
+        logoutEvent.preventDefault(); // prevent whatever was the default beahviour of this event        
+        // sign out the user & update the state -> make everything null
+        firebase.auth().signOut()
+            .then(() => {
+                this.setState({
+                    user: null,
+                    displayName: null,
+                    userId: null
+                });
+                // navigate to another page (login page)
+                navigate('/login');
+            });
+    }
 
   render() {
     return (
       <div>
-        <Navigation user={this.state.user} />
+        <Navigation user={this.state.user} logoutUser={this.logoutUser}/>
         {this.state.user && (
-          <Welcome user={this.state.user} />
+          <Welcome userName={this.state.displayName} logoutUser={this.logoutUser}/>
         )}
         {/** The Router component is imported from the node modules
          * This component allows component wrapped inside it to be routed using 
@@ -50,7 +94,7 @@ class App extends Component {
           <Home path='/' user={this.state.user} />
           <Login path="/login" />
           <Meetings path="/meetings" />
-          <Register path="/register" />
+          <Register path="/register" registerUser={this.registerUser}/>
         </Router>
       </div>
     );

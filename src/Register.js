@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import FormError from './FormError'
+import firebase from './Firebase'
 
 class Register extends Component {
     
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         // this state is only applicable to this component
         this.state = {
             displayName: '', // notice the names of these fields are same as the names given to the HTML tags
@@ -14,6 +15,7 @@ class Register extends Component {
             errorMessage: null
         }
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
@@ -29,9 +31,32 @@ class Register extends Component {
         });
     }
 
+    // receives an event, the submit button click
+    handleSubmit(event) {
+        // construct registration object
+        const registrationInfo = {
+            displayName: this.state.displayName,
+            email: this.state.email,
+            password: this.state.passOne
+        };
+        event.preventDefault();
+        // push authentication request to firebase
+        firebase.auth().createUserWithEmailAndPassword(registrationInfo.email, registrationInfo.password)
+            .then(() => {
+                this.props.registerUser(registrationInfo.displayName);
+            })
+            .catch(error => {
+            if (error.message != null) {
+                this.setState({ errorMessage: error.message });
+            } else {
+                this.setState({ errorMessage: null });
+            }
+        });
+    }
+
     render() {
         return (
-            <form className="mt-3">
+            <form className="mt-3" onSubmit={this.handleSubmit}>
             <div className="container">
             <div className="row justify-content-center">
                 <div className="col-lg-8">
