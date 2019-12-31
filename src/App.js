@@ -77,6 +77,19 @@ class App extends Component {
             });
     }
 
+    /**
+     * This function adds meetings to the firebase realtime database. The meeting is added to the uid of the currently
+     * signed in user.
+     * 
+     * @param meetingName - The name of the meeting to be added
+     */
+    addMeeting = (meetingName) => {
+        const ref = firebase.database()
+            .ref(`meetings/${this.state.user.uid}`); // the tilde quotes allow for passing in variables. If no variables
+        // are to be passed, then normal straight quotes would also work.
+        ref.push({meetingName: meetingName}); // push the meeting name value on the user id in the firebase db
+    }
+
   render() {
     return (
       <div>
@@ -93,8 +106,8 @@ class App extends Component {
         <Router>
           <Home path='/' user={this.state.user} />
           <Login path="/login" />
-          <Meetings path="/meetings" />
-          <Register path="/register" registerUser={this.registerUser}/>
+          <Meetings path="/meetings" addMeeting={this.addMeeting} />
+          <Register path="/register" registerUser={this.registerUser} />
         </Router>
       </div>
     );
