@@ -12,6 +12,7 @@ import Navigation from './Navigation';
 import Login from './Login';
 import Meetings from './Meetings';
 import Register from './Register';
+import Checkin from './Checkin';
 
 class App extends Component {
 
@@ -20,7 +21,9 @@ class App extends Component {
     this.state = {
         user: null,
         displayName: null,
-        userId: null
+        userId: null,
+        meetings: null,
+        numberOfMeetings: null
     }
   }
 
@@ -33,6 +36,28 @@ class App extends Component {
                   displayName: firebaseUser.displayName,
                   userId: firebaseUser.uid
               });
+
+              const meetingRef = firebase.database().ref(`meetings/${firebaseUser.uid}`);
+              meetingRef.on('value', snapshot => {
+                  let meetings = snapshot.val();
+                  let meetingsList = []; // same thing but stored as an array 
+
+                  // add all meetings to meetingsList
+                  // this is JS for iterating an object whose key we do not know
+                  for (let item in meetings) {
+                      meetingsList.push({
+                          meetingId: item,
+                          meetingName: meetings[item].meetingName
+                      });
+                  }
+
+                  this.setState({
+                      meetings: meetingsList,
+                      numberOfMeetings: meetingsList.length
+                  });
+              })
+          } else {
+              this.setState({ user: null });
           }
       });
     }
@@ -77,6 +102,19 @@ class App extends Component {
             });
     }
 
+    /**
+     * This function adds meetings to the firebase realtime database. The meeting is added to the uid of the currently
+     * signed in user.
+     * 
+     * @param meetingName - The name of the meeting to be added
+     */
+    addMeeting = (meetingName) => {
+        const ref = firebase.database()
+            .ref(`meetings/${this.state.user.uid}`); // the tilde quotes allow for passing in variables. If no variables
+        // are to be passed, then normal straight quotes would also work.
+        ref.push({meetingName: meetingName}); // push the meeting name value on the user id in the firebase db
+    }
+
   render() {
     return (
       <div>
@@ -91,10 +129,17 @@ class App extends Component {
          * component will NOT show up. Components outside the router will always show up.
          */}
         <Router>
-          <Home path='/' user={this.state.user} />
-          <Login path="/login" />
-          <Meetings path="/meetings" />
-          <Register path="/register" registerUser={this.registerUser}/>
+            <Home path='/' 
+                user={this.state.user} />
+            <Login path="/login" />
+            <Meetings path="/meetings" 
+                    addMeeting={this.addMeeting}
+                    meetings={this.state.meetings}
+                    userId={this.state.userId} />
+            {/** Another way of sending props in the URL */}
+            <Checkin path="/checkin/:userId/:meetingId" /> 
+            <Register path="/register" 
+                      registerUser={this.registerUser} />
         </Router>
       </div>
     );
