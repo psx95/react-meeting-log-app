@@ -12,6 +12,7 @@ import Navigation from './Navigation';
 import Login from './Login';
 import Meetings from './Meetings';
 import Register from './Register';
+import Checkin from './Checkin';
 
 class App extends Component {
 
@@ -128,15 +129,17 @@ class App extends Component {
          * component will NOT show up. Components outside the router will always show up.
          */}
         <Router>
-          <Home path='/' 
+            <Home path='/' 
                 user={this.state.user} />
-          <Login path="/login" />
-          <Meetings path="/meetings" 
+            <Login path="/login" />
+            <Meetings path="/meetings" 
                     addMeeting={this.addMeeting}
                     meetings={this.state.meetings}
                     userId={this.state.userId} />
-          <Register path="/register" 
-                    registerUser={this.registerUser} />
+            {/** Another way of sending props in the URL */}
+            <Checkin path="/checkin/:userId/:meetingId" /> 
+            <Register path="/register" 
+                      registerUser={this.registerUser} />
         </Router>
       </div>
     );
