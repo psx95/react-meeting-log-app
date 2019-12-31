@@ -20,7 +20,9 @@ class App extends Component {
     this.state = {
         user: null,
         displayName: null,
-        userId: null
+        userId: null,
+        meetings: null,
+        numberOfMeetings: null
     }
   }
 
@@ -128,7 +130,7 @@ class App extends Component {
         <Router>
           <Home path='/' user={this.state.user} />
           <Login path="/login" />
-          <Meetings path="/meetings" addMeeting={this.addMeeting} />
+          <Meetings path="/meetings" addMeeting={this.addMeeting} meetings={this.state.meetings}/>
           <Register path="/register" registerUser={this.registerUser} />
         </Router>
       </div>
