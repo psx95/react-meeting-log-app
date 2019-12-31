@@ -58,12 +58,31 @@ class App extends Component {
         })
     }
 
+    /**
+     * We are writing logout function directly in the app component because this function may be called from multiple 
+     * components like Navigation or from Welcome. Therefore it makes sense to place it in the App component.
+     */
+    logoutUser = (logoutEvent) => {
+        logoutEvent.preventDefault(); // prevent whatever was the default beahviour of this event        
+        // sign out the user & update the state -> make everything null
+        firebase.auth().signOut()
+            .then(() => {
+                this.setState({
+                    user: null,
+                    displayName: null,
+                    userId: null
+                });
+                // navigate to another page (login page)
+                navigate('/login');
+            });
+    }
+
   render() {
     return (
       <div>
-        <Navigation user={this.state.user} />
+        <Navigation user={this.state.user} logoutUser={this.logoutUser}/>
         {this.state.user && (
-          <Welcome userName={this.state.displayName} />
+          <Welcome userName={this.state.displayName} logoutUser={this.logoutUser}/>
         )}
         {/** The Router component is imported from the node modules
          * This component allows component wrapped inside it to be routed using 
