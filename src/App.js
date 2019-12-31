@@ -26,13 +26,15 @@ class App extends Component {
 
   componentDidMount() {
     // establish connection with firebase database and load state from there
-      const ref = firebase.database().ref('user');
-      ref.on('value', snapshot => {
-          let fbUser = snapshot.val();
-          this.setState({
-              user: fbUser
-          });
-      })
+      firebase.auth().onAuthStateChanged(firebaseUser => {
+          if (firebaseUser) {
+              this.setState({
+                  user: firebaseUser,
+                  displayName: firebaseUser.displayName,
+                  userId: firebaseUser.uid
+              });
+          }
+      });
     }
 
     registerUser = (userName) => {
@@ -61,7 +63,7 @@ class App extends Component {
       <div>
         <Navigation user={this.state.user} />
         {this.state.user && (
-          <Welcome user={this.state.displayName} />
+          <Welcome userName={this.state.displayName} />
         )}
         {/** The Router component is imported from the node modules
          * This component allows component wrapped inside it to be routed using 
