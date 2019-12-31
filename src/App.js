@@ -128,10 +128,15 @@ class App extends Component {
          * component will NOT show up. Components outside the router will always show up.
          */}
         <Router>
-          <Home path='/' user={this.state.user} />
+          <Home path='/' 
+                user={this.state.user} />
           <Login path="/login" />
-          <Meetings path="/meetings" addMeeting={this.addMeeting} meetings={this.state.meetings}/>
-          <Register path="/register" registerUser={this.registerUser} />
+          <Meetings path="/meetings" 
+                    addMeeting={this.addMeeting}
+                    meetings={this.state.meetings}
+                    userId={this.state.userId} />
+          <Register path="/register" 
+                    registerUser={this.registerUser} />
         </Router>
       </div>
     );
