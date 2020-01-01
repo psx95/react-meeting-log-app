@@ -1,10 +1,23 @@
 import React, { Component } from 'react';
 import { GoTrashcan } from 'react-icons/go';
+import firebase from './Firebase';
 
 class AttendeesList extends Component {
 
     constructor(props) {
         super(props);
+        this.deleteAttendee = this.deleteAttendee.bind(this);
+    }
+
+    deleteAttendee(event, meetingId, attendeeId) {
+        event.preventDefault();
+        const ref = firebase.database()
+            .ref(`meetings/${this.props.adminUser}/${meetingId}/attendees/${attendeeId}`);
+        ref.remove()
+            .then(() => { console.log('removed successfully ' + `meetings/${this.props.adminUser}/${meetingId}/attendees/${attendeeId}`); })
+            .catch(error => {
+                console.log('some error occured ' + error);
+            });
     }
 
     render() {
@@ -21,7 +34,7 @@ class AttendeesList extends Component {
                         }>
                             {admin && (
                                 <div className="btn-group pr-2">
-                                    <button className="btn btn-sm btn-outline-secondary" title="delete" onClick={e => this.deleteAtendee(e, this.props.meetingId, this.props.attendeeId)}>
+                                    <button className="btn btn-sm btn-outline-secondary" title="delete" onClick={e => this.deleteAttendee(e, this.props.meetingId, item.attendeeId)}>
                                         <GoTrashcan/>
                                     </button>
                                 </div>
