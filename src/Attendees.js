@@ -6,7 +6,7 @@ class Attendees extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            displayAttendees: []
+            displayAttendees: []            
         };
     }
 
@@ -37,7 +37,10 @@ class Attendees extends Component {
                     </div>
                 </div>
                 {/**The userId passed below will allow us to add conditional checks like if user is admin, he may have the option to add or delete more attendees */}
-                <AttendeesList userId={this.state.userId} attendees={this.state.displayAttendees} />
+                <AttendeesList userId={this.props.userId}
+                    attendees={this.state.displayAttendees}
+                    adminUser={this.props.adminUser}
+                    meetingID={this.props.meetingId}/>
             </div>
         );
     }
