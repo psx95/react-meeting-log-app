@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import firebase from './Firebase';
+import AttendeesList from './AttendeesList';
 
 class Attendees extends Component {
     constructor(props) {
@@ -35,7 +36,8 @@ class Attendees extends Component {
                     </h1>
                     </div>
                 </div>
-                List Goes Here
+                {/**The userId passed below will allow us to add conditional checks like if user is admin, he may have the option to add or delete more attendees */}
+                <AttendeesList userId={this.state.userId} attendees={this.state.displayAttendees} />
             </div>
         );
     }
