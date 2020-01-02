@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { GoTrashcan } from 'react-icons/go';
+import { GoTrashcan, GoListUnordered } from 'react-icons/go';
 import { FaLink } from 'react-icons/fa';
 import { navigate } from '@reach/router';
 import firebase from './Firebase'
@@ -27,6 +27,11 @@ class MeetingsList extends Component {
                         <button className="btn btn-sm btn-outline-secondary" title="Check-In Meeting"
                             onClick={() => navigate(`/checkin/${this.props.userId}/${item.meetingId}`)}>
                             <FaLink />
+                        </button>
+
+                        <button className="btn btn-sm btn-outline-secondary" title="Attendees List"
+                            onClick={() => navigate(`/attendees/${this.props.userId}/${item.meetingId}`)}>
+                            <GoListUnordered />
                         </button>
                     </section>
                     <section className="pl-3 text-left align-self-center">

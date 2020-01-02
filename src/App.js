@@ -13,6 +13,7 @@ import Login from './Login';
 import Meetings from './Meetings';
 import Register from './Register';
 import Checkin from './Checkin';
+import Attendees from './Attendees';
 
 class App extends Component {
 
@@ -138,6 +139,7 @@ class App extends Component {
                     userId={this.state.userId} />
             {/** Another way of sending props in the URL */}
             <Checkin path="/checkin/:userId/:meetingId" /> 
+            <Attendees path="/attendees/:userId/:meetingId" adminUser={this.state.userId}/>
             <Register path="/register" 
                       registerUser={this.registerUser} />
         </Router>
