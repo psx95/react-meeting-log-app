@@ -27,7 +27,8 @@ class Checkin extends Component {
             .ref(`meetings/${this.props.userId}/${this.props.meetingId}/attendees`);
         ref.push({
             attendeeName: this.state.displayName,
-            attendeeEmail: this.state.email
+            attendeeEmail: this.state.email,
+            star: false
         });
         navigate(`/attendees/${this.props.userId}/${this.props.meetingId}`);
     }

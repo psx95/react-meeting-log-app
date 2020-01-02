@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { GoTrashcan } from 'react-icons/go';
+import { GoTrashcan, GoStar } from 'react-icons/go';
 import firebase from './Firebase';
 
 class AttendeesList extends Component {
@@ -7,6 +7,7 @@ class AttendeesList extends Component {
     constructor(props) {
         super(props);
         this.deleteAttendee = this.deleteAttendee.bind(this);
+        this.toggleStar = this.toggleStar.bind(this);
     }
 
     deleteAttendee(event, meetingId, attendeeId) {
@@ -18,6 +19,18 @@ class AttendeesList extends Component {
             .catch(error => {
                 console.log('some error occured ' + error);
             });
+    }
+
+    toggleStar(event, star, meetingId, attendeeId) {
+        event.preventDefault();
+        const adminUser = this.props.adminUser;
+        const ref = firebase.database()
+            .ref(`meetings/${adminUser}/${meetingId}/attendees/${attendeeId}/star`);
+        if (star == undefined) {
+            ref.set(true);
+        } else {
+            ref.set(!star);
+        }
     }
 
     render() {
@@ -34,6 +47,11 @@ class AttendeesList extends Component {
                         }>
                             {admin && (
                                 <div className="btn-group pr-2">
+                                    <button className={
+                                        "btn btn-sm " + (item.star ? 'btn-info' : 'btn-outline-secondary')
+                                    } title="star" onClick={e => this.toggleStar(e, item.star, this.props.meetingId, item.attendeeId)}>
+                                        <GoStar/>
+                                    </button>
                                     <button className="btn btn-sm btn-outline-secondary" title="delete" onClick={e => this.deleteAttendee(e, this.props.meetingId, item.attendeeId)}>
                                         <GoTrashcan/>
                                     </button>
