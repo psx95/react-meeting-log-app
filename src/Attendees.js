@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import firebase from './Firebase';
 import AttendeesList from './AttendeesList';
+import { FaUndo } from 'react-icons/fa';
 
 class Attendees extends Component {
     constructor(props) {
@@ -9,6 +10,7 @@ class Attendees extends Component {
             searchQuery: "",
             displayAttendees: []            
         };    
+        this.handleChange = this.handleChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -36,6 +38,12 @@ class Attendees extends Component {
         this.setState({ [itemName]: itemValue });
     }
 
+    resetQuery() {
+        this.setState({
+            searchQuery: ""
+        });
+    }
+ 
     render() {
         const dataFilter = item => item.attendeeName
             .toLowerCase()
@@ -52,7 +60,14 @@ class Attendees extends Component {
                     </h1>                    
                         <div className="card bg-light mb-4">
                             <div className="card-body text-center">
-                                <input type="text" name="searchQuery" value={this.state.searchQuery} placeholder="Search Attendees" className="form-control" onChange={this.handleChange}/>
+                                <div className="input-group input-group-lg">
+                                    <input type="text" name="searchQuery" value={this.state.searchQuery} placeholder="Search Attendees" className="form-control" onChange={this.handleChange} />
+                                    <div className="input-group-append">
+                                        <button className="btn btn-sm btn-outline-info" title="Reset Search" onClick={() => this.resetQuery()}> {/**This onClick is a function call, unlike the above where onChange defines what function to be called and is not actually called at that time */}
+                                            <FaUndo />
+                                        </button>
+                                    </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>
