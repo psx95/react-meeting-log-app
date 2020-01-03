@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import firebase from './Firebase';
 import AttendeesList from './AttendeesList';
-import { FaUndo } from 'react-icons/fa';
+import { FaUndo, FaRandom } from 'react-icons/fa';
 
 class Attendees extends Component {
     constructor(props) {
         super(props);
         this.state = {
             searchQuery: "",
+            allAttendees: [],
             displayAttendees: []            
         };    
         this.handleChange = this.handleChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.chooseRandom = this.chooseRandom.bind(this);
     }
 
     componentDidMount() {
@@ -27,7 +29,10 @@ class Attendees extends Component {
                     star: attendees[item].star
                 });
             }
-            this.setState({ displayAttendees: attendeesList });
+            this.setState({
+                displayAttendees: attendeesList,
+                allAttendees: attendeesList
+            });
         });
     }
 
@@ -40,8 +45,17 @@ class Attendees extends Component {
 
     resetQuery() {
         this.setState({
-            searchQuery: ""
+            searchQuery: "",
+            displayAttendees: this.state.allAttendees
         });
+    }
+
+    chooseRandom() {
+        const randomAttendee = Math.floor(Math.random() * this.state.allAttendees.length);
+        this.resetQuery();
+        this.setState({
+            displayAttendees: [this.state.allAttendees[randomAttendee]]
+        })
     }
  
     render() {
@@ -65,6 +79,9 @@ class Attendees extends Component {
                                     <div className="input-group-append">
                                         <button className="btn btn-sm btn-outline-info" title="Reset Search" onClick={() => this.resetQuery()}> {/**This onClick is a function call, unlike the above where onChange defines what function to be called and is not actually called at that time */}
                                             <FaUndo />
+                                        </button>
+                                        <button className="btn btn-sm btn-outline-info" title="Choose Random Attendee" onClick={() => this.chooseRandom()}>
+                                            <FaRandom />
                                         </button>
                                     </div>
                                 </div>                                
